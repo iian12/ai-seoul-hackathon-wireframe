@@ -1,0 +1,54 @@
+erDiagram
+    housing_raw_collections ||--o{ housing_raw_sources : contains
+    housing_raw_sources ||--o{ housing_raw_records : stores
+    housing_raw_sources ||--o{ housing_raw_batches : imports
+
+    housing_raw_collections {
+        text id PK
+        jsonb manifest
+        boolean archive_verified
+        text state
+        timestamptz created_at
+        timestamptz completed_at
+    }
+
+    housing_raw_sources {
+        bigint id PK
+        text collection_id FK
+        text source_id
+        bigint expected_rows
+        bigint loaded_rows
+        text records_sha256
+        text state
+    }
+
+    housing_raw_records {
+        bigint source_id PK,FK
+        bigint row_no PK
+        jsonb payload
+    }
+
+    housing_raw_batches {
+        bigint source_id PK,FK
+        bigint start_row PK
+        integer row_count
+        text sha256
+    }
+
+    housing_snapshots {
+        text id PK
+        timestamptz created_at
+        boolean published
+        jsonb payload
+    }
+
+    housing_ingestion_runs {
+        bigint id PK
+        text snapshot_id
+        timestamptz started_at
+        timestamptz finished_at
+        text status
+        integer area_count
+        text error_code
+    }
+
